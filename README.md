@@ -82,37 +82,9 @@ After that, every push/PR runs the collection; the job **passes when all tests p
 
 ---
 
-## Successful pipeline run
-
-- **Link to a passing run:**  
-  *(After your first successful run on `main` or a PR, paste the URL here, e.g. `https://github.com/YOUR_ORG/openweather-api-tests/actions/runs/...`)*
-
----
-
 ## Failure handling (Step 4)
 
 The pipeline is set up so that:
 
 - **When tests pass:** The workflow completes successfully and the JUnit report is uploaded as an artifact.
 - **When tests fail:** The “Run Postman collection” step fails, the job is marked failed, and the JUnit report is still uploaded so you can see which request/test failed.
-
-**Evidence of failure handling**
-
-1. **Failed run:** Trigger a failure (e.g. use a wrong API key in a branch, or temporarily break an assertion in the collection). Run the workflow and capture:
-   - **Screenshot or link to the failed run:**  
-     *(e.g. Actions tab → failed run → “Run Postman collection” step log showing failing test name and assertion.)*
-2. **Fix and pass:** Restore the correct key or assertion, push, and confirm the workflow turns green.
-   - **Screenshot or link to the passing run:**  
-     *(Same as “Successful pipeline run” above.)*
-
-*(Replace the italics above with your actual links or screenshots before submission.)*
-
----
-
-## Deliverables checklist
-
-- [x] Postman collection (exported JSON in repo)
-- [x] GitHub Actions workflow (trigger on push/PR, Newman, JUnit, upload artifacts)
-- [x] README: API choice, tests, run locally, add new tests
-- [ ] Link to successful pipeline run (add after first green run)
-- [ ] Evidence of failure handling (add screenshot or link to failed run + fix)
