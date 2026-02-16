@@ -1,0 +1,676 @@
+{
+  "info": {
+    "_postman_id": "dc0b1b5f-13ee-435e-8a50-59b55e6113c5",
+    "name": "OpenWeather API",
+    "description": "# OpenWeather API Test Collection\n\nThis collection provides comprehensive API testing coverage for the OpenWeather API, including functional tests, smoke tests, and error handling scenarios.\n\n## Base URL\nAll requests use the `{{baseUrl}}` environment variable pointing to `https://api.openweathermap.org`.\n\n## Authentication\nRequests require an API key passed via the `appid` query parameter. Store your key in the `{{openweather_api_key}}` environment variable.\n\n## Test Coverage\n\n### Health Check (Smoke Tests)\nBasic connectivity and authentication validation to ensure the API is accessible and responding correctly.\n\n### Functional Tests\nCore API functionality testing:\n- **Current Weather** - Retrieves real-time weather data for specified coordinates\n- **Forecast** - Gets 5-day/3-hour weather forecast data\n- **Geocoding** - Converts location names to geographic coordinates\n\n### Error Handling\nNegative test scenarios to validate proper error responses:\n- **Invalid API Key** - Verifies 401 response for unauthorized requests\n- **Invalid Coordinates** - Tests boundary validation for lat/lon parameters\n- **Missing Parameters** - Confirms proper error handling when required params are omitted\n\n## Test Script Standards\nEach request includes post-response tests for:\n1. Status code validation\n2. Response body structure verification\n3. JSON schema validation\n4. Response time performance checks\n5. Content-Type header validation\n\n## Environment Variables Required\n| Variable | Description |\n|----------|-------------|\n| `baseUrl` | OpenWeather API base URL |\n| `openweather_api_key` | Your OpenWeather API key |\n\n## Getting Started\n1. Set up an OpenWeather account at [openweathermap.org](https://openweathermap.org/api)\n2. Generate an API key from your account dashboard\n3. Configure the `OpenWeather` environment with your credentials\n4. Run the collection using the Collection Runner for full test execution",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "51415481",
+    "_collection_link": "https://go.postman.co/collection/51415481-dc0b1b5f-13ee-435e-8a50-59b55e6113c5?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "API Health Check",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status code is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/data/2.5/weather?lat=0&lon=0&appid={{openweather_api_key}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "data",
+                "2.5",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "0"
+                },
+                {
+                  "key": "lon",
+                  "value": "0"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{openweather_api_key}}"
+                }
+              ]
+            },
+            "description": "Generated from cURL: curl --location '{{baseUrl}}/data/2.5/weather?lat=0&lon=0&appid={{openweather_api_key}}'"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Functional Tests",
+      "item": [
+        {
+          "name": "Forecast",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "})",
+                  "",
+                  "pm.test('Response has list array and city object', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('list');",
+                  "    pm.expect(jsonData.list).to.be.an('array');",
+                  "    pm.expect(jsonData).to.have.property('city');",
+                  "    pm.expect(jsonData.city).to.be.an('object');",
+                  "})",
+                  "",
+                  "pm.test('List array has at least 8 forecast items', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.list.length).to.be.at.least(8);",
+                  "})",
+                  "",
+                  "pm.test('City object has name, coord, and country', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.city).to.have.property('name');",
+                  "    pm.expect(jsonData.city).to.have.property('coord');",
+                  "    pm.expect(jsonData.city).to.have.property('country');",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/data/2.5/forecast?lat=44.34&lon=10&appid={{openweather_api_key}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "data",
+                "2.5",
+                "forecast"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "44.34"
+                },
+                {
+                  "key": "lon",
+                  "value": "10"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{openweather_api_key}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Current Weather",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "})",
+                  "",
+                  "pm.test('Response has required fields: coord, weather, main, wind, name', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property('coord');",
+                  "    pm.expect(jsonData).to.have.property('weather');",
+                  "    pm.expect(jsonData).to.have.property('main');",
+                  "    pm.expect(jsonData).to.have.property('wind');",
+                  "    pm.expect(jsonData).to.have.property('name');",
+                  "})",
+                  "",
+                  "pm.test('Temperature exists and is a number', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.main).to.have.property('temp');",
+                  "    pm.expect(jsonData.main.temp).to.be.a('number');",
+                  "})",
+                  "",
+                  "pm.test('Weather array has at least one item', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.weather).to.be.an('array');",
+                  "    pm.expect(jsonData.weather.length).to.be.at.least(1);",
+                  "})",
+                  "",
+                  "pm.test('Coordinates match requested lat/lon approximately', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    const requestedLat = parseFloat(pm.request.url.query.get('lat'));",
+                  "    const requestedLon = parseFloat(pm.request.url.query.get('lon'));",
+                  "    if (!isNaN(requestedLat) && !isNaN(requestedLon)) {",
+                  "        const tolerance = 0.5;",
+                  "        pm.expect(jsonData.coord.lat).to.be.closeTo(requestedLat, tolerance);",
+                  "        pm.expect(jsonData.coord.lon).to.be.closeTo(requestedLon, tolerance);",
+                  "    }",
+                  "})",
+                  "",
+                  "pm.test('Schema validation for weather response', function () {",
+                  "    const schema = {",
+                  "        type: 'object',",
+                  "        required: [",
+                  "            'coord',",
+                  "            'weather',",
+                  "            'main',",
+                  "            'wind',",
+                  "            'name'",
+                  "        ],",
+                  "        properties: {",
+                  "            coord: {",
+                  "                type: 'object',",
+                  "                required: [",
+                  "                    'lon',",
+                  "                    'lat'",
+                  "                ],",
+                  "                properties: {",
+                  "                    lon: { type: 'number' },",
+                  "                    lat: { type: 'number' }",
+                  "                }",
+                  "            },",
+                  "            weather: {",
+                  "                type: 'array',",
+                  "                items: {",
+                  "                    type: 'object',",
+                  "                    required: [",
+                  "                        'id',",
+                  "                        'main',",
+                  "                        'description',",
+                  "                        'icon'",
+                  "                    ],",
+                  "                    properties: {",
+                  "                        id: { type: 'integer' },",
+                  "                        main: { type: 'string' },",
+                  "                        description: { type: 'string' },",
+                  "                        icon: { type: 'string' }",
+                  "                    }",
+                  "                }",
+                  "            },",
+                  "            main: {",
+                  "                type: 'object',",
+                  "                required: [",
+                  "                    'temp',",
+                  "                    'feels_like',",
+                  "                    'pressure',",
+                  "                    'humidity'",
+                  "                ],",
+                  "                properties: {",
+                  "                    temp: { type: 'number' },",
+                  "                    feels_like: { type: 'number' },",
+                  "                    temp_min: { type: 'number' },",
+                  "                    temp_max: { type: 'number' },",
+                  "                    pressure: { type: 'integer' },",
+                  "                    humidity: { type: 'integer' }",
+                  "                }",
+                  "            },",
+                  "            wind: {",
+                  "                type: 'object',",
+                  "                required: ['speed'],",
+                  "                properties: {",
+                  "                    speed: { type: 'number' },",
+                  "                    deg: { type: 'integer' },",
+                  "                    gust: { type: 'number' }",
+                  "                }",
+                  "            },",
+                  "            name: { type: 'string' },",
+                  "            visibility: { type: 'integer' },",
+                  "            clouds: {",
+                  "                type: 'object',",
+                  "                properties: { all: { type: 'integer' } }",
+                  "            },",
+                  "            dt: { type: 'integer' },",
+                  "            sys: {",
+                  "                type: 'object',",
+                  "                properties: {",
+                  "                    country: { type: 'string' },",
+                  "                    sunrise: { type: 'integer' },",
+                  "                    sunset: { type: 'integer' }",
+                  "                }",
+                  "            },",
+                  "            timezone: { type: 'integer' },",
+                  "            id: { type: 'integer' },",
+                  "            cod: { type: 'integer' }",
+                  "        }",
+                  "    };",
+                  "    pm.response.to.have.jsonSchema(schema);",
+                  "})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/data/2.5/weather?lat=44.34&lon=10&appid={{openweather_api_key}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "data",
+                "2.5",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "44.34"
+                },
+                {
+                  "key": "lon",
+                  "value": "10"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{openweather_api_key}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Geocoding",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status code is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "})",
+                  "",
+                  "pm.test('Response time is under 2000ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "})",
+                  "",
+                  "pm.test('Response is an array', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.be.an('array');",
+                  "})",
+                  "",
+                  "pm.test('Array contains at least one location', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.length).to.be.at.least(1);",
+                  "})",
+                  "",
+                  "pm.test('Latitude values are between -90 and 90', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    jsonData.forEach(function (location, index) {",
+                  "        pm.expect(location.lat).to.be.at.least(-90, `Location ${ index } lat below -90`);",
+                  "        pm.expect(location.lat).to.be.at.most(90, `Location ${ index } lat above 90`);",
+                  "    });",
+                  "})",
+                  "",
+                  "pm.test('Longitude values are between -180 and 180', function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    jsonData.forEach(function (location, index) {",
+                  "        pm.expect(location.lon).to.be.at.least(-180, `Location ${ index } lon below -180`);",
+                  "        pm.expect(location.lon).to.be.at.most(180, `Location ${ index } lon above 180`);",
+                  "    });",
+                  "})",
+                  "",
+                  "pm.test('Schema validation for location objects', function () {",
+                  "    const schema = {",
+                  "        type: 'array',",
+                  "        items: {",
+                  "            type: 'object',",
+                  "            required: [",
+                  "                'name',",
+                  "                'lat',",
+                  "                'lon',",
+                  "                'country'",
+                  "            ],",
+                  "            properties: {",
+                  "                name: { type: 'string' },",
+                  "                local_names: { type: 'object' },",
+                  "                lat: { type: 'number' },",
+                  "                lon: { type: 'number' },",
+                  "                country: { type: 'string' },",
+                  "                state: { type: 'string' }",
+                  "            }",
+                  "        }",
+                  "    };",
+                  "    pm.response.to.have.jsonSchema(schema);",
+                  "})"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/geo/1.0/direct?q=Summit&limit=8594&appid={{openweather_api_key}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "geo",
+                "1.0",
+                "direct"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "Summit",
+                  "description": "e.g. London or London,GB"
+                },
+                {
+                  "key": "limit",
+                  "value": "8594"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{openweather_api_key}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Handling",
+      "item": [
+        {
+          "name": "Invalid API Key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test for 401 Unauthorized status",
+                  "pm.test(\"Status code is 401 Unauthorized\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "",
+                  "// Test response time",
+                  "pm.test(\"Response time is less than 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "// Test that response has error structure",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property(\"message\");",
+                  "});",
+                  "",
+                  "// Test error code",
+                  "pm.test(\"Response contains cod field with 401\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.cod).to.exist;",
+                  "    pm.expect(String(jsonData.cod)).to.equal(\"401\");",
+                  "});",
+                  "",
+                  "// Test Content-Type",
+                  "pm.test(\"Content-Type is application/json\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "// Test that message describes the error",
+                  "pm.test(\"Error message is descriptive\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.be.a(\"string\");",
+                  "    pm.expect(jsonData.message.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/data/2.5/weather?lat=44.34&lon=10&appid=INVALID_API_KEY_12345",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "data",
+                "2.5",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "44.34"
+                },
+                {
+                  "key": "lon",
+                  "value": "10"
+                },
+                {
+                  "key": "appid",
+                  "value": "INVALID_API_KEY_12345"
+                }
+              ]
+            },
+            "description": "Tests the API response when an invalid or incorrect API key is provided. Expected response: 401 Unauthorized."
+          },
+          "response": []
+        },
+        {
+          "name": "Invalid Coordinates",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test for 400 Bad Request status",
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "// Test response time",
+                  "pm.test(\"Response time is less than 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "// Test that response has error structure",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property(\"message\");",
+                  "});",
+                  "",
+                  "// Test error code",
+                  "pm.test(\"Response contains cod field with 400\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.cod).to.exist;",
+                  "    pm.expect(String(jsonData.cod)).to.equal(\"400\");",
+                  "});",
+                  "",
+                  "// Test Content-Type",
+                  "pm.test(\"Content-Type is application/json\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "// Test that message describes coordinate error",
+                  "pm.test(\"Error message describes the coordinate issue\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.be.a(\"string\");",
+                  "    pm.expect(jsonData.message.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/data/2.5/weather?lat=999&lon=999&appid={{openweather_api_key}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "data",
+                "2.5",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "lat",
+                  "value": "999"
+                },
+                {
+                  "key": "lon",
+                  "value": "999"
+                },
+                {
+                  "key": "appid",
+                  "value": "{{openweather_api_key}}"
+                }
+              ]
+            },
+            "description": "Tests the API response when invalid latitude/longitude coordinates are provided. Expected response: 400 Bad Request."
+          },
+          "response": []
+        },
+        {
+          "name": "Missing Parameters",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Test for 400 Bad Request status",
+                  "pm.test(\"Status code is 400 Bad Request\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "// Test response time",
+                  "pm.test(\"Response time is less than 2000ms\", function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(2000);",
+                  "});",
+                  "",
+                  "// Test that response has error structure",
+                  "pm.test(\"Response has error message\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData).to.have.property(\"message\");",
+                  "});",
+                  "",
+                  "// Test error code exists",
+                  "pm.test(\"Response contains cod field\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.cod).to.exist;",
+                  "});",
+                  "",
+                  "// Test Content-Type",
+                  "pm.test(\"Content-Type is application/json\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Content-Type\")).to.include(\"application/json\");",
+                  "});",
+                  "",
+                  "// Test that message describes missing parameter error",
+                  "pm.test(\"Error message describes missing parameters\", function () {",
+                  "    const jsonData = pm.response.json();",
+                  "    pm.expect(jsonData.message).to.be.a(\"string\");",
+                  "    pm.expect(jsonData.message.length).to.be.above(0);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/data/2.5/weather?appid={{openweather_api_key}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "data",
+                "2.5",
+                "weather"
+              ],
+              "query": [
+                {
+                  "key": "appid",
+                  "value": "{{openweather_api_key}}"
+                }
+              ]
+            },
+            "description": "Tests the API response when required parameters (lat/lon) are missing. Expected response: 400 Bad Request."
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+# OpenWeather API Tests - Run on push to main, pull requests, and manual trigger
+name: Postman API Tests
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Postman collection
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install Newman
+        run: npm install -g newman
+
+      - name: Run Postman collection
+        env:
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+        run: |
+          mkdir -p results
+          newman run OpenWeather-API.postman_collection.json \
+            --environment openweather-env.postman_environment.json \
+            --env-var "openweather_api_key=$OPENWEATHER_API_KEY" \
+            --reporters cli,junit \
+            --reporter-junit-export results/tests.xml
+
+      - name: Upload JUnit results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-results
+          path: results/tests.xml
+          retention-days: 30

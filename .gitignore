@@ -1,0 +1,11 @@
+# Local env overrides (do not commit real API keys)
+.env
+.env.local
+*.local
+
+# Newman / test output (optional; CI uploads artifacts)
+results/
+node_modules/
+
+# OS
+.DS_Store
