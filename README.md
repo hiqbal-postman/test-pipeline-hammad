@@ -8,7 +8,7 @@ Postman collection and GitHub Actions pipeline for testing the [OpenWeather API]
 
 **API:** [OpenWeather](https://openweathermap.org/api) (Current Weather, Forecast, Geocoding).
 
-**Why:** Real public API with a free tier, requires an API key (good practice for auth in CI), and offers several simple endpoints so we can cover smoke, functional, and error-handling tests in one collection.
+**Why:** This is a real public API that is available quickly which also requires an API key to test out auth, and offers several simple endpoints so we can cover smoke, functional, and error-handling tests in one collection.
 
 ---
 
