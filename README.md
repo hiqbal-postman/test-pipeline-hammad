@@ -82,7 +82,7 @@ After that, every push/PR runs the collection; the job **passes when all tests p
 
 ---
 
-## Failure handling (Step 4)
+## Failure handling
 
 The pipeline is set up so that:
 
